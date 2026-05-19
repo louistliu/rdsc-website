@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function EventsPage() {
   return (
     <main>
-      <h1>Events</h1>
+      <h1 className="font-display">Events</h1>
       <p>Here you can browse all our upcoming events.</p>
       
       <ul>
