@@ -1,13 +1,19 @@
-/* Styles for the individual event page */
-
 .container {
   max-width: 600px;
   margin: 0 auto;
   padding: 2rem;
 }
 
+.eventImage {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
 .description {
   margin: 1rem 0;
+  line-height: 1.6;
 }
 
 .checkoutBox {
@@ -21,18 +27,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 }
 
-.quantitySelector {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.ticketSelect {
+  padding: 0.5rem;
+  border-radius: 4px;
 }
 
 .quantityInput {
   width: 60px;
-  padding: 0.25rem;
+  padding: 0.5rem;
+  text-align: center;
 }
 
 .checkoutButton {
