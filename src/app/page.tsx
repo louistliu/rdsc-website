@@ -1,23 +1,15 @@
 import Link from "next/link";
+import styles from "./page.module.css";
+
 
 export default function Home() {
   return (
     <main>
-      <h1 className="font-display">Home / Landing Page</h1>
-      <p>Welcome to our website!</p>
-      
-      <section>
-        <h2 className="font-display">Featured Events</h2>
-        {/* Placeholder for event cards */}
-        <ul>
-          <li>
-            <Link href="/events/1">Event 1 (Click to view details)</Link>
-          </li>
-          <li>
-            <Link href="/events/2">Event 2 (Click to view details)</Link>
-          </li>
-        </ul>
-      </section>
+      <h1 className={`font-display ${styles.title}`}>RED DRAGON SOCIAL CLUB</h1>
+      <p className={styles.subtext}>
+          <span className={styles.firstLine}>WHERE TILES CLICK</span>
+          <span className={styles.secondLine}>AND STRANGERS BECOME FRIENDS</span>
+      </p>
     </main>
   );
 }

@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 import localFont from "next/font/local";
 import "@/app/globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const inter = Inter({
-  variable: "--font-inter",
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });
 
 const tanTangkiwood = localFont({
@@ -26,8 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${tanTangkiwood.variable}`}>
-      <body style={{ fontFamily: "var(--font-inter)" }}>
+    <html lang="en" className={`${poppins.variable} ${tanTangkiwood.variable}`}>
+      <body>
         <Navbar />
         <main style={{ padding: "0 1rem", flex: 1 }}>
           {children}

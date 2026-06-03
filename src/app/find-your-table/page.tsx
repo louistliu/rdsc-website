@@ -8,12 +8,12 @@ export default async function EventsPage() {
 
   return (
     <main className={styles.container}>
-      <h1 className="font-display">Upcoming Events</h1>
+      <h1 className="font-display">FIND YOUR TABLE</h1>
       
       <div className={styles.grid}>
         {events.length > 0 ? (
           events.map((event) => (
-            <Link href={`/events/${event.id}`} key={event.id} className={styles.card}>
+            <Link href={`/find-your-table/${event.id}`} key={event.id} className={styles.card}>
               {event.images[0] && (
                 <Image
                   src={event.images[0]}
