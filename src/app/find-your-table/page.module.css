@@ -1,48 +1,126 @@
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
+  max-width: 1200px; 
+  margin: 8rem auto 8rem;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  font-size: 6.5rem; 
+  color: #FFE6B1;
+  letter-spacing: 0.05em;
+  margin-bottom: 2.5rem;
+  text-align: center;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
+  gap: 5rem; 
+  width: 100%;
 }
 
 .card {
-  display: block;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  background-color: #F5ECD7;
+  border-radius: 16px;
+  border: 1px solid #FF863C; 
   overflow: hidden;
-  text-decoration: none;
-  color: inherit;
-  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 1.25rem;
 }
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.imageContainer {
+  width: 100%;
+  height: 225px;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 0.75rem; /* Reduced to compensate for picture height */
 }
 
 .cardImage {
-  width: 100%;
-  height: auto;
   object-fit: cover;
 }
 
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  background-color: #C0C0C0;
+}
+
 .cardContent {
-  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
 }
 
-.cardTitle {
-  font-size: 1.25rem;
+.cardLocation {
+  font-family: var(--font-poppins);
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #1A1410;
+  margin: 0 0 0.25rem 0;
+  text-transform: uppercase;
+}
+
+.cardDate {
+  font-family: var(--font-poppins);
+  font-size: 1.15rem;
+  color: #1A1410;
+  margin: 0;
+  font-weight: 500;
+}
+
+.cardTime {
+  font-family: var(--font-poppins);
+  font-size: 1.1rem;
+  color: #1A1410;
+  margin: 0 0 0.5rem 0; /* Tightened gap below text */
+  font-weight: 500;
+}
+
+.takeSeatBtn {
+  display: inline-block;
+  margin-top: auto;
+  padding: 0.65rem 2.5rem; /* Tightened vertical padding on button to reduce card height */
+  border: 1.5px solid #E23434;
+  border-radius: 50px;
+  color: #E23434;
+  font-family: var(--font-poppins);
+  font-size: 1.15rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
 }
 
-.cardDescription {
-  font-size: 0.9rem;
-  color: #666;
+.takeSeatBtn:hover {
+  background-color: #E23434;
+  color: #F5ECD7;
+}
+
+.noEvents {
+  color: #F5ECD7;
+  font-family: var(--font-poppins);
+  font-size: 1.2rem;
+  text-align: center;
+  grid-column: 1 / -1;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .title {
+    font-size: 3.5rem;
+    margin-bottom: 3rem;
+  }
 }
