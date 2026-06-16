@@ -8,30 +8,42 @@ export default async function EventsPage() {
 
   return (
     <main className={styles.container}>
-      <h1 className="font-display">FIND YOUR TABLE</h1>
+      <h1 className={`font-display ${styles.title}`}>FIND YOUR TABLE</h1>
       
       <div className={styles.grid}>
         {events.length > 0 ? (
           events.map((event) => (
-            <Link href={`/find-your-table/${event.id}`} key={event.id} className={styles.card}>
-              {event.images[0] && (
-                <Image
-                  src={event.images[0]}
-                  alt={event.name}
-                  width={400}
-                  height={200}
-                  className={styles.cardImage}
-                />
-              )}
-              <div className={styles.cardContent}>
-                {event.description && (
-                  <p className={styles.cardDescription}>{event.description}</p>
+            <div key={event.id} className={styles.card}>
+              <div className={styles.imageContainer}>
+                {event.images[0] ? (
+                  <Image
+                    src={event.images[0]}
+                    alt={event.name}
+                    fill
+                    className={styles.cardImage}
+                  />
+                ) : (
+                  <div className={styles.imagePlaceholder} />
                 )}
               </div>
-            </Link>
+              <div className={styles.cardContent}>
+                <h2 className={styles.cardLocation}>
+                  {event.metadata?.location || 'LOCATION TBA'}
+                </h2>
+                <p className={styles.cardDate}>
+                  {event.metadata?.date || 'Date TBA'}
+                </p>
+                <p className={styles.cardTime}>
+                  {event.metadata?.time || 'Time TBA'}
+                </p>
+                <Link href={`/find-your-table/${event.id}`} className={styles.takeSeatBtn}>
+                  TAKE A SEAT
+                </Link>
+              </div>
+            </div>
           ))
         ) : (
-          <p>No upcoming events found. Please check back later!</p>
+          <p className={styles.noEvents}>No upcoming events found. Please check back later!</p>
         )}
       </div>
     </main>

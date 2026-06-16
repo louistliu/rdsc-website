@@ -1,5 +1,5 @@
 import styles from './faq.module.css';
-import FaqAccordion from './FaqAccordion';
+import Accordion from './Accordion';
 
 export default function FAQPage() {
   return (
@@ -18,7 +18,7 @@ export default function FAQPage() {
           />
         </div>
         <div className={styles.rightColumn}>
-          <FaqAccordion />
+          <Accordion />
         </div>
       </div>
     </div>
