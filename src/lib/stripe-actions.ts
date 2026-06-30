@@ -24,11 +24,17 @@ export async function getEventById(id: string) {
     return {
       id: product.id,
       name: product.name,
-      description: product.description,
       imageUrl: product.images[0] || null,
+      location: product.metadata.location || null,
+      venue: product.metadata.venue || null,
+      city: product.metadata.city || null,
+      date: product.metadata.date || null,
+      time: product.metadata.time || null,
 
       ticketOptions: prices.data.map((price) => ({
         priceId: price.id,
+        name: price.nickname || "Ticket",
+        unitAmount: price.unit_amount || 0,
         priceDisplay: price.unit_amount
           ? `€${(price.unit_amount / 100).toFixed(2)}`
           : "Free",
