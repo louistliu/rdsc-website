@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "@/app/globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -27,14 +28,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${poppins.variable} ${tanTangkiwood.variable}`}>
-      <body>
-        <Navbar />
-        <main style={{ padding: "0 1rem", flex: 1, minHeight: "100vh" }}>
-          {children}
-        </main>
-        <Footer />
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" className={`${poppins.variable} ${tanTangkiwood.variable}`}>
+        <body>
+          <Navbar />
+          <main style={{ padding: "0 1rem", flex: 1, minHeight: "100vh" }}>
+            {children}
+          </main>
+          <Footer />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
