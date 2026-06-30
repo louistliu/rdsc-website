@@ -1,60 +1,247 @@
 .container {
-  max-width: 600px;
+  min-height: 100vh;
+  padding: 10rem 4rem 6rem 4rem;
+}
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  max-width: 1300px;
   margin: 0 auto;
-  padding: 2rem;
 }
 
-.eventImage {
+/* LEFT COLUMN STYLES */
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.galleryPlaceholder {
   width: 100%;
-  height: auto;
-  border-radius: 8px;
-  margin-bottom: 2rem;
+  height: 650px; /* Base height for the gallery */
+  background-color: #E2CDCC;
 }
 
-.description {
-  margin: 1rem 0;
-  line-height: 1.6;
+/* TICKET BOX (Now under gallery) */
+.ticketBox {
+  border: 1px solid rgba(255, 134, 60, 0.4);
+  border-radius: 12px;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+  margin-top: 3.5rem; /* Space between gallery and ticket box */
 }
 
-.checkoutBox {
-  margin: 2rem 0;
-  padding: 1.5rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-.ticketInfo {
+.ticketRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1.5rem;
 }
 
-.ticketSelect {
-  padding: 0.5rem;
-  border-radius: 4px;
+.ticketLabel {
+  font-family: var(--font-poppins);
+  font-weight: 600;
+  color: #F5ECD7;
+  font-size: 1.1rem;
 }
 
-.quantityInput {
-  width: 60px;
-  padding: 0.5rem;
-  text-align: center;
+.ticketToggle {
+  display: flex;
+  background: #E6D8D7;
+  border-radius: 6px;
+  overflow: hidden;
 }
 
-.checkoutButton {
-  margin-top: 2rem;
-  width: 100%;
-  padding: 1rem;
-  background: #000;
-  color: #fff;
+.toggleBtn {
+  padding: 0.5rem 1rem;
+  background: transparent;
   border: none;
-  border-radius: 4px;
+  font-family: var(--font-poppins);
+  font-weight: 600;
+  color: #1A1410;
+  font-size: 0.9rem;
   cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
 }
 
-.checkoutButton:disabled {
-  background: #ccc;
+.activeToggle {
+  background: #FF863C;
+  color: #1A1410;
+}
+
+.quantityControl {
+  display: flex;
+  align-items: center;
+  background: #E6D8D7;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.qtyBtn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  font-family: var(--font-poppins);
+  font-weight: 600;
+  color: #1A1410;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.qtyBtn:hover {
+  background: rgba(0,0,0,0.1);
+}
+
+.qtyValue {
+  width: 40px;
+  text-align: center;
+  font-family: var(--font-poppins);
+  font-weight: 600;
+  color: #1A1410;
+}
+
+.totalPrice {
+  font-family: var(--font-poppins);
+  font-weight: 700;
+  color: #F5ECD7;
+  font-size: 1.35rem;
+}
+
+.getSeatsBtn {
+  margin-top: 1rem;
+  align-self: flex-start;
+  padding: 0.8rem 3rem;
+  border: 1.5px solid #FF863C;
+  background: transparent;
+  color: #F5ECD7;
+  font-family: var(--font-poppins);
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.getSeatsBtn:hover {
+  background: #FF863C;
+  color: #1A1410;
+}
+
+.getSeatsBtn:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
+}
+
+
+/* DETAILS COLUMN STYLES */
+.detailsColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 3.5rem;
+  color: #F5ECD7;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.02em;
+}
+
+.metaInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: #F5ECD7;
+  font-size: 1rem;
+  font-family: var(--font-poppins);
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.description {
+  color: #F5ECD7;
+  font-family: var(--font-poppins);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  white-space: pre-wrap; /* Preserves paragraphs and line breaks from Stripe */
+  margin-bottom: 3.5rem;
+}
+
+/* LOCATION FOOTER */
+.locationFooter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.locationTitle {
+  font-size: 2.5rem;
+  color: #FFE6B1;
+  margin-bottom: 0.5rem;
+}
+
+.addressText {
+  color: #F5ECD7;
+  font-family: var(--font-poppins);
+  font-size: 1.1rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.mapsLink {
+  color: #F5ECD7;
+  font-family: var(--font-poppins);
+  font-size: 1.1rem;
+  text-decoration: underline;
+  margin-top: 0.5rem;
+}
+
+.mapsLink:hover {
+  color: #FF863C;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .gridContainer {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+  .galleryPlaceholder {
+    height: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 8rem 2rem 4rem 2rem;
+  }
+  .galleryPlaceholder {
+    height: 400px;
+  }
+  .title {
+    font-size: 2.8rem;
+  }
+  .ticketRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+  .getSeatsBtn {
+    width: 100%;
+    align-self: center;
+  }
 }

@@ -28,7 +28,7 @@ export default async function EventsPage() {
               </div>
               <div className={styles.cardContent}>
                 <h2 className={styles.cardLocation}>
-                  {event.metadata?.location || 'LOCATION TBA'}
+                  {event.metadata?.city || event.metadata?.location || 'LOCATION TBA'}
                 </h2>
                 <p className={styles.cardDate}>
                   {event.metadata?.date || 'Date TBA'}

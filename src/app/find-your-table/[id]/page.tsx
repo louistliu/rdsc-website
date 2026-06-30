@@ -16,8 +16,12 @@ export default async function EventDetailsPage({
   return (
     <EventCheckout
       name={event.name}
-      description={event.description}
       imageUrl={event.imageUrl}
+      location={event.location}
+      venue={event.venue}
+      city={event.city}
+      date={event.date}
+      time={event.time}
       ticketOptions={event.ticketOptions}
     />
   );
