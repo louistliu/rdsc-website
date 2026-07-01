@@ -1,7 +1,6 @@
 import { defineConfig } from 'drizzle-kit';
 import * as dotenv from 'dotenv';
 
-// Load the local environment variables so drizzle-kit can find DATABASE_URL
 dotenv.config({ path: '.env.local' });
 
 export default defineConfig({
