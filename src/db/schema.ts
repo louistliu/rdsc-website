@@ -1,7 +1,7 @@
-import { pgTable, text, timestamp, integer, uuid } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, integer, serial } from 'drizzle-orm/pg-core';
 
 export const events = pgTable('events', {
-  id: uuid('id').defaultRandom().primaryKey(),
+  id: serial('id').primaryKey(),
   title: text('title').notNull(),
   description: text('description').notNull(),
   venue: text('venue').notNull(),
@@ -10,13 +10,14 @@ export const events = pgTable('events', {
   date: text('date').notNull(),
   time: text('time').notNull(),
   mapsUrl: text('maps_url').notNull(),
+  stripeProductId: text('stripe_product_id').notNull().default(''), // Added for Stripe sync
   imageUrls: text('image_urls').array().notNull().default([]), // For UploadThing multiple pictures
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const ticketTiers = pgTable('ticket_tiers', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  eventId: uuid('event_id')
+  id: serial('id').primaryKey(),
+  eventId: integer('event_id')
     .notNull()
     .references(() => events.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),

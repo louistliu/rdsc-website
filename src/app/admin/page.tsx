@@ -5,6 +5,7 @@ import AdminClient from "./AdminClient";
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPage() {
+
   const allEvents = await db.select().from(events);
   const allTiers = await db.select().from(ticketTiers);
 
