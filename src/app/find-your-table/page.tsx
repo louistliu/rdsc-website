@@ -1,24 +1,27 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getEvents } from "@/lib/stripe-actions";
+import { db } from "@/db";
+import { events } from "@/db/schema";
 import styles from "./page.module.css";
 
+export const dynamic = 'force-dynamic';
+
 export default async function EventsPage() {
-  const events = await getEvents();
+  const allEvents = await db.select().from(events);
 
   return (
     <main className={styles.container}>
       <h1 className={`font-display ${styles.title}`}>FIND YOUR TABLE</h1>
       
       <div className={styles.grid}>
-        {events.length > 0 ? (
-          events.map((event) => (
+        {allEvents.length > 0 ? (
+          allEvents.map((event) => (
             <div key={event.id} className={styles.card}>
               <div className={styles.imageContainer}>
-                {event.images[0] ? (
+                {event.imageUrls && event.imageUrls.length > 0 ? (
                   <Image
-                    src={event.images[0]}
-                    alt={event.name}
+                    src={event.imageUrls[0]}
+                    alt={event.title}
                     fill
                     className={styles.cardImage}
                   />
@@ -28,13 +31,13 @@ export default async function EventsPage() {
               </div>
               <div className={styles.cardContent}>
                 <h2 className={styles.cardLocation}>
-                  {event.metadata?.city || event.metadata?.location || 'LOCATION TBA'}
+                  {event.city || 'LOCATION TBA'}
                 </h2>
                 <p className={styles.cardDate}>
-                  {event.metadata?.date || 'Date TBA'}
+                  {event.date || 'Date TBA'}
                 </p>
                 <p className={styles.cardTime}>
-                  {event.metadata?.time || 'Time TBA'}
+                  {event.time || 'Time TBA'}
                 </p>
                 <Link href={`/find-your-table/${event.id}`} className={styles.takeSeatBtn}>
                   TAKE A SEAT

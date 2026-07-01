@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
         protocol: "https" as const,
         hostname: "files.stripe.com",
       },
+      {
+        protocol: "https" as const,
+        hostname: "utfs.io",
+      },
     ],
   },
 };
