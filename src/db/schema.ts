@@ -6,6 +6,7 @@ export const events = pgTable('events', {
   description: text('description').notNull(),
   venue: text('venue').notNull(),
   city: text('city').notNull(),
+  address: text('address').notNull(),
   date: text('date').notNull(),
   time: text('time').notNull(),
   mapsUrl: text('maps_url').notNull(),
