@@ -21,6 +21,6 @@ export const ticketTiers = pgTable('ticket_tiers', {
   name: text('name').notNull(),
   price: integer('price').notNull(), // In cents (e.g., 2000 = $20.00)
   capacity: integer('capacity').notNull(),
-  ticketsSold: integer('tickets_sold').notNull().default(0), // Tracks how many have been sold
-  stripePriceId: text('stripe_price_id').notNull(), // Links to the Stripe Price Object
+  ticketsSold: integer('tickets_sold').notNull().default(0),
+  stripePriceId: text('stripe_price_id').notNull(),
 });
