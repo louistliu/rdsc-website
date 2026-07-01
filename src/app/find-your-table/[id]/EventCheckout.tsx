@@ -5,79 +5,63 @@ import Image from "next/image";
 import styles from "./page.module.css";
 
 type TicketOption = {
-  priceId: string;
+  id: number;
   name: string;
-  priceDisplay: string;
-  unitAmount: number;
+  price: number;
+  capacity: number;
+  ticketsSold: number;
+  stripePriceId: string;
 };
 
 type EventCheckoutProps = {
-  name: string | null;
-  imageUrl: string | null;
-  location: string | null;
+  title: string | null;
+  description: string | null;
+  imageUrls: string[] | null;
   venue: string | null;
   city: string | null;
+  address: string | null;
+  mapsUrl: string | null;
   date: string | null;
   time: string | null;
   ticketOptions: TicketOption[];
 };
 
 export default function EventCheckout({
-  name,
-  location,
+  title,
+  description,
+  imageUrls,
   venue,
   city,
+  address,
+  mapsUrl,
   date,
   time,
   ticketOptions,
 }: EventCheckoutProps) {
   const [loading, setLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedPriceId, setSelectedPriceId] = useState(
-    ticketOptions[0]?.priceId || ""
+    ticketOptions[0]?.stripePriceId || ""
   );
 
-  const selectedOption = ticketOptions.find((o) => o.priceId === selectedPriceId);
+  const galleryImages = imageUrls ? imageUrls.slice(1) : [];
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % galleryImages.length);
+  };
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
+  };
+
+  const selectedOption = ticketOptions.find((o) => o.stripePriceId === selectedPriceId);
   const totalPrice = selectedOption
-    ? ((selectedOption.unitAmount * quantity) / 100).toFixed(2)
+    ? ((selectedOption.price * quantity) / 100).toFixed(2)
     : "0.00";
 
   const handleCheckout = async () => {
-    if (!selectedPriceId) {
-      alert("Please select a ticket type.");
-      return;
-    }
-    setLoading(true);
-
-    try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          priceId: selectedPriceId,
-          quantity: quantity,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        throw new Error("No checkout URL returned from server.");
-      }
-    } catch (err) {
-      console.error("Checkout error:", err);
-      alert("Something went wrong during checkout. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    alert("Checkout flow is currently disabled while we finalize the design.");
   };
 
   return (
@@ -85,7 +69,42 @@ export default function EventCheckout({
       <div className={styles.gridContainer}>
         {/* LEFT COLUMN: Image Gallery & Tickets */}
         <div className={styles.leftColumn}>
-          <div className={styles.galleryPlaceholder}></div>
+          {galleryImages.length > 0 ? (
+            <div className={styles.galleryContainer}>
+              {/* Thumbnails */}
+              <div className={styles.thumbnailList}>
+                {galleryImages.map((img, index) => (
+                  <div 
+                    key={index} 
+                    className={`${styles.thumbnailWrapper} ${currentImageIndex === index ? styles.activeThumbnail : ''}`}
+                    onClick={() => setCurrentImageIndex(index)}
+                  >
+                    <Image src={img} alt={`Thumbnail ${index + 1}`} fill style={{ objectFit: 'cover' }} />
+                  </div>
+                ))}
+              </div>
+              
+              {/* Main Image */}
+              <div className={styles.mainImageWrapper}>
+                <Image src={galleryImages[currentImageIndex]} alt={title || "Event Image"} fill style={{ objectFit: 'cover' }} />
+                
+                {galleryImages.length > 1 && (
+                  <>
+                    <button className={`${styles.navArrow} ${styles.navArrowLeft}`} onClick={handlePrevImage}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <button className={`${styles.navArrow} ${styles.navArrowRight}`} onClick={handleNextImage}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className={styles.emptyGalleryPlaceholder}>
+              No additional images available
+            </div>
+          )}
 
           <div className={styles.ticketBox}>
             <div className={styles.ticketRow}>
@@ -93,11 +112,11 @@ export default function EventCheckout({
               <div className={styles.ticketToggle}>
                 {ticketOptions.map((option) => (
                   <button
-                    key={option.priceId}
+                    key={option.stripePriceId}
                     className={`${styles.toggleBtn} ${
-                      selectedPriceId === option.priceId ? styles.activeToggle : ""
+                      selectedPriceId === option.stripePriceId ? styles.activeToggle : ""
                     }`}
-                    onClick={() => setSelectedPriceId(option.priceId)}
+                    onClick={() => setSelectedPriceId(option.stripePriceId)}
                   >
                     {option.name}
                   </button>
@@ -138,10 +157,10 @@ export default function EventCheckout({
 
         {/* RIGHT COLUMN: Details */}
         <div className={styles.detailsColumn}>
-          <h1 className={`font-display ${styles.title}`}>{name}</h1>
+          <h1 className={`font-display ${styles.title}`}>{title}</h1>
 
           <div className={styles.metaInfo}>
-            { (venue || city || location) && (
+            { (venue || city) && (
               <div className={styles.metaRow}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -158,7 +177,7 @@ export default function EventCheckout({
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                   <circle cx="12" cy="10" r="3"></circle>
                 </svg>
-                <span>{[venue, city].filter(Boolean).join(" • ") || location}</span>
+                <span>{[venue, city].filter(Boolean).join(" • ")}</span>
               </div>
             )}
             { (date || time) && (
@@ -185,18 +204,20 @@ export default function EventCheckout({
             )}
           </div>
 
-          <div className={styles.description}>
-            [Placeholder for Event Description]
+          <div className={styles.description} style={{ whiteSpace: 'pre-wrap' }}>
+            {description}
           </div>
 
           <div className={styles.locationFooter}>
             <h3 className={`font-display ${styles.locationTitle}`}>Location</h3>
-            <p className={styles.addressText}>
-              [Placeholder for Event Address]
+            <p className={styles.addressText} style={{ whiteSpace: 'pre-wrap' }}>
+              {address}
             </p>
-            <p className={styles.mapsLink}>
-              [Placeholder for Google Maps Link]
-            </p>
+            {mapsUrl && (
+              <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className={styles.mapsLink}>
+                View on Google Maps
+              </a>
+            )}
           </div>
         </div>
       </div>
