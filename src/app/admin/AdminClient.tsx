@@ -7,14 +7,14 @@ import "@uploadthing/react/styles.css";
 import { createEvent, updateEvent, deleteEvent } from "@/lib/admin-actions";
 
 type TicketTier = {
-  id?: string;
+  id?: number;
   name: string;
   price: number;
   capacity: number;
 };
 
 type EventData = {
-  id: string;
+  id: number;
   title: string;
   description: string;
   venue: string;
@@ -29,7 +29,7 @@ type EventData = {
 
 export default function AdminClient({ initialEvents }: { initialEvents: EventData[] }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingEventId, setEditingEventId] = useState<string | null>(null);
+  const [editingEventId, setEditingEventId] = useState<number | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -67,7 +67,7 @@ export default function AdminClient({ initialEvents }: { initialEvents: EventDat
     setIsFormOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
     if (!window.confirm("Are you sure you want to completely delete this event? This action cannot be undone.")) return;
     
     setIsDeleting(true);
