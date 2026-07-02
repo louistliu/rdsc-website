@@ -39,11 +39,8 @@ export default function EventCheckout({
   ticketOptions,
 }: EventCheckoutProps) {
   const [loading, setLoading] = useState(false);
-  const [quantity, setQuantity] = useState(1);
+  const [cart, setCart] = useState<Record<string, number>>({});
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [selectedPriceId, setSelectedPriceId] = useState(
-    ticketOptions[0]?.stripePriceId || ""
-  );
 
   const galleryImages = imageUrls ? imageUrls.slice(1) : [];
 
@@ -55,13 +52,65 @@ export default function EventCheckout({
     setCurrentImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
   };
 
-  const selectedOption = ticketOptions.find((o) => o.stripePriceId === selectedPriceId);
-  const totalPrice = selectedOption
-    ? ((selectedOption.price * quantity) / 100).toFixed(2)
-    : "0.00";
+  const handleAddToCart = (priceId: string) => {
+    setCart((prev) => ({ ...prev, [priceId]: 1 }));
+  };
+
+  const updateQuantity = (priceId: string, delta: number) => {
+    setCart((prev) => {
+      const newQty = Math.max(0, (prev[priceId] || 0) + delta);
+      return { ...prev, [priceId]: newQty };
+    });
+  };
+
+  const totalCents = ticketOptions.reduce((acc, option) => {
+    const qty = cart[option.stripePriceId] || 0;
+    return acc + (option.price * qty);
+  }, 0);
+
+  const totalPrice = (totalCents / 100).toFixed(2);
+  const totalItems = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
 
   const handleCheckout = async () => {
-    alert("Checkout flow is currently disabled while we finalize the design.");
+    if (totalItems === 0) {
+      alert("Please add at least one ticket to your cart.");
+      return;
+    }
+    setLoading(true);
+
+    const items = ticketOptions
+      .filter((option) => (cart[option.stripePriceId] || 0) > 0)
+      .map((option) => ({
+        priceId: option.stripePriceId,
+        quantity: cart[option.stripePriceId],
+      }));
+
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ items }),
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("No checkout URL returned from server.");
+      }
+    } catch (err) {
+      console.error("Checkout error:", err);
+      alert("Something went wrong during checkout. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -107,48 +156,44 @@ export default function EventCheckout({
           )}
 
           <div className={styles.ticketBox}>
-            <div className={styles.ticketRow}>
-              <span className={styles.ticketLabel}>Ticket Type:</span>
-              <div className={styles.ticketToggle}>
-                {ticketOptions.map((option) => (
-                  <button
-                    key={option.stripePriceId}
-                    className={`${styles.toggleBtn} ${
-                      selectedPriceId === option.stripePriceId ? styles.activeToggle : ""
-                    }`}
-                    onClick={() => setSelectedPriceId(option.stripePriceId)}
-                  >
-                    {option.name}
-                  </button>
-                ))}
-              </div>
+            <h2 className={styles.ticketBoxTitle}>Tickets</h2>
+            
+            <div className={styles.cartList}>
+              {ticketOptions.map((option) => {
+                const qty = cart[option.stripePriceId] || 0;
+                
+                return (
+                  <div key={option.stripePriceId} className={styles.cartItemRow}>
+                    <div className={styles.cartItemInfo}>
+                      <span className={styles.cartItemName}>{option.name}</span>
+                      <span className={styles.cartItemPrice}>€{(option.price / 100).toFixed(2)}</span>
+                    </div>
+                    
+                    {qty === 0 ? (
+                      <button className={styles.addBtn} onClick={() => handleAddToCart(option.stripePriceId)}>
+                        Add
+                      </button>
+                    ) : (
+                      <div className={styles.stepperControl}>
+                        <button className={styles.stepperBtn} onClick={() => updateQuantity(option.stripePriceId, -1)}>-</button>
+                        <span className={styles.stepperValue}>{qty}</span>
+                        <button className={styles.stepperBtn} onClick={() => updateQuantity(option.stripePriceId, 1)}>+</button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
-            <div className={styles.ticketRow}>
-              <span className={styles.ticketLabel}>Quantity:</span>
-              <div className={styles.quantityControl}>
-                <button
-                  className={styles.qtyBtn}
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                >
-                  -
-                </button>
-                <span className={styles.qtyValue}>{quantity}</span>
-                <button className={styles.qtyBtn} onClick={() => setQuantity((q) => q + 1)}>
-                  +
-                </button>
-              </div>
-            </div>
-
-            <div className={styles.ticketRow}>
-              <span className={styles.ticketLabel}>Total Price:</span>
+            <div className={styles.totalRow}>
+              <span className={styles.ticketLabel}>Total:</span>
               <span className={styles.totalPrice}>€{totalPrice}</span>
             </div>
 
             <button
               className={styles.getSeatsBtn}
               onClick={handleCheckout}
-              disabled={loading || ticketOptions.length === 0}
+              disabled={loading || totalItems === 0}
             >
               {loading ? "PROCESSING..." : "GET SEATS"}
             </button>

@@ -113,65 +113,90 @@
   background: rgba(26, 20, 16, 0.2);
 }
 
-/* TICKET BOX (Now under gallery) */
+/* CART & TICKET BOX */
 .ticketBox {
   border: 1px solid rgba(255, 134, 60, 0.4);
   border-radius: 12px;
   padding: 2.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.8rem;
-  margin-top: 3.5rem; /* Space between gallery and ticket box */
+  gap: 1.2rem;
+  margin-top: 3.5rem;
 }
 
-.ticketRow {
+.ticketBoxTitle {
+  font-family: var(--font-display);
+  color: #FF863C;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.cartItemRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0.5rem 0;
+  min-height: 60px; /* Force equal but smaller sizes for the ticket boxes */
+  border-bottom: 1px solid rgba(245, 236, 215, 0.1);
 }
 
-.ticketLabel {
+.cartItemRow:last-of-type {
+  border-bottom: none;
+}
+
+.cartItemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.cartItemName {
   font-family: var(--font-poppins);
   font-weight: 600;
   color: #F5ECD7;
   font-size: 1.1rem;
 }
 
-.ticketToggle {
-  display: flex;
-  background: #E6D8D7;
-  border-radius: 6px;
-  overflow: hidden;
+.cartItemPrice {
+  font-family: var(--font-poppins);
+  color: rgba(245, 236, 215, 0.7);
+  font-size: 0.95rem;
 }
 
-.toggleBtn {
-  padding: 0.5rem 1rem;
+.addBtn {
   background: transparent;
-  border: none;
+  border: 1px solid #FF863C;
+  color: #FF863C;
   font-family: var(--font-poppins);
   font-weight: 600;
-  color: #1A1410;
   font-size: 0.9rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.activeToggle {
+.addBtn:hover {
   background: #FF863C;
   color: #1A1410;
 }
 
-.quantityControl {
+.stepperControl {
   display: flex;
   align-items: center;
   background: #E6D8D7;
   border-radius: 6px;
   overflow: hidden;
+  height: 36px;
 }
 
-.qtyBtn {
-  width: 32px;
-  height: 32px;
+.stepperBtn {
+  width: 36px;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -184,16 +209,32 @@
   cursor: pointer;
 }
 
-.qtyBtn:hover {
+.stepperBtn:hover {
   background: rgba(0,0,0,0.1);
 }
 
-.qtyValue {
+.stepperValue {
   width: 40px;
   text-align: center;
   font-family: var(--font-poppins);
   font-weight: 600;
   color: #1A1410;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0;
+  padding-top: 1rem;
+  border-top: 1px dashed rgba(255, 134, 60, 0.4);
+}
+
+.ticketLabel {
+  font-family: var(--font-poppins);
+  font-weight: 600;
+  color: #F5ECD7;
+  font-size: 1.1rem;
 }
 
 .totalPrice {
@@ -204,10 +245,11 @@
 }
 
 .getSeatsBtn {
-  margin-top: 1rem;
-  align-self: flex-start;
-  padding: 0.8rem 3rem;
+  margin-top: 1.5rem;
+  align-self: center;
+  padding: 0.8rem 4rem;
   border: 1.5px solid #FF863C;
+  border-radius: 8px;
   background: transparent;
   color: #F5ECD7;
   font-family: var(--font-poppins);
