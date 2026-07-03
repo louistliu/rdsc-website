@@ -19,13 +19,6 @@ export default function Navbar() {
 
   return (
     <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
-      <div className={styles.leftSection}>
-        <Link href="/" className={styles.logoLink}>
-          {/* Placeholder image, waiting for /logo.png in the public folder */}
-          <img src="/Logo.png" alt="RDSC Logo" className={styles.logo} />
-        </Link>
-      </div>
-      
       <div className={styles.centerSection}>
         <ul className={styles.navlinks}>
           <li><Link href="/" className={styles.navlink}>Home</Link></li>
