@@ -1,24 +1,48 @@
 .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 7rem 2rem 4rem 2rem; /* Pushed the entire container down further */
+}
+
+.contentWrapper {
   text-align: center;
-  padding: 4rem 1rem;
+  width: 100%;
+  max-width: 700px;
+  background-color: rgba(255, 255, 255, 0.03);
+  padding: 2rem 2rem 3rem 2rem; /* Less padding on top, more on bottom */
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.title {
+  font-size: 3.5rem;
+  margin-top: 0; /* Removing default h1 margin that was causing uneven top space */
+  margin-bottom: 0.8rem;
 }
 
 .message {
-  margin-top: 1rem;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.sessionId {
-  margin-top: 1rem;
-  color: #666;
-  font-size: 0.9rem;
-  word-break: break-all;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #CCCCCC;
+  max-width: 480px;
+  margin: 0 auto 1.8rem auto;
 }
 
 .homeLink {
   display: inline-block;
-  margin-top: 2rem;
-  text-decoration: underline;
+  padding: 1rem 3rem;
+  background-color: var(--foreground);
+  color: var(--background);
+  font-weight: 500;
+  font-size: 1.1rem;
+  border-radius: 100px;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.homeLink:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
 }
