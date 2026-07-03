@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
+import { db } from "@/db";
+import { ticketTiers } from "@/db/schema";
+import { inArray } from "drizzle-orm";
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,6 +14,32 @@ export async function POST(req: NextRequest) {
         { error: "Cart is empty or invalid data" },
         { status: 400 }
       );
+    }
+
+    const priceIds = items.map((item: any) => item.priceId);
+
+    const dbTiers = await db
+      .select()
+      .from(ticketTiers)
+      .where(inArray(ticketTiers.stripePriceId, priceIds));
+
+    for (const item of items) {
+      const dbTier = dbTiers.find((t) => t.stripePriceId === item.priceId);
+      
+      if (!dbTier) {
+        return NextResponse.json(
+          { error: `Invalid ticket selected: ${item.priceId}` },
+          { status: 400 }
+        );
+      }
+      
+      const remaining = Math.max(0, dbTier.capacity - dbTier.ticketsSold);
+      if (item.quantity > remaining) {
+        return NextResponse.json(
+          { error: `Insufficient capacity for ${dbTier.name}. Only ${remaining} tickets left.` },
+          { status: 400 }
+        );
+      }
     }
 
     const origin = req.headers.get("origin") || "http://localhost:3000";

@@ -39,7 +39,6 @@ export async function createEvent(formData: any) {
   const createdStripePriceIds: string[] = [];
 
   try {
-    // 1. Create Stripe Product & Prices BEFORE database transaction
     const stripeProduct = await stripe.products.create({
       name: title,
       description: description || "Event Ticket",
@@ -60,7 +59,6 @@ export async function createEvent(formData: any) {
       }
     }
 
-    // 2. Synchronous Database Transaction
     await db.transaction(async (tx) => {
       const [newEvent] = await tx.insert(events).values({
         title,
@@ -93,7 +91,6 @@ export async function createEvent(formData: any) {
   } catch (error: any) {
     console.error("Error saving event:", error);
     
-    // STRIPE ROLLBACK: If DB fails, archive the orphaned Stripe objects
     if (stripeProductId) {
       await stripe.products.update(stripeProductId, { active: false }).catch(() => {});
     }
@@ -118,7 +115,6 @@ export async function updateEvent(id: number, formData: any) {
   try {
     const [oldEvent] = await db.select().from(events).where(eq(events.id, id));
     
-    // UploadThing Cleanup
     if (oldEvent && oldEvent.imageUrls) {
       const removedUrls = oldEvent.imageUrls.filter((url: string) => !imageUrls.includes(url));
       if (removedUrls.length > 0) {
@@ -127,7 +123,6 @@ export async function updateEvent(id: number, formData: any) {
       }
     }
 
-    // 1. Stripe API calls BEFORE database transaction
     if (oldEvent && oldEvent.stripeProductId) {
       await stripe.products.update(oldEvent.stripeProductId, {
         name: title,
@@ -136,31 +131,55 @@ export async function updateEvent(id: number, formData: any) {
     }
 
     const oldTiers = await db.select().from(ticketTiers).where(eq(ticketTiers.eventId, id));
-    for (const t of oldTiers) {
-      if (t.stripePriceId && t.stripePriceId.startsWith('price_')) {
-        await stripe.prices.update(t.stripePriceId, { active: false }).catch(console.error);
-      }
-    }
+    const oldTiersMap = new Map(oldTiers.map(t => [t.name, t]));
+    const pricesToArchive: string[] = [];
 
     const createdTiers: any[] = [];
     if (tiers && tiers.length > 0) {
       for (const tier of tiers) {
         let priceId = "pending_stripe_setup";
-        if (oldEvent && oldEvent.stripeProductId) {
-          const stripePrice = await stripe.prices.create({
-            product: oldEvent.stripeProductId,
-            unit_amount: tier.price,
-            currency: 'eur',
-            nickname: tier.name,
-          });
-          priceId = stripePrice.id;
-          createdStripePriceIds.push(priceId);
+        let ticketsSold = 0;
+        
+        const oldTier = oldTiersMap.get(tier.name);
+
+        if (oldTier && oldTier.price === tier.price && oldTier.stripePriceId) {
+          priceId = oldTier.stripePriceId;
+          ticketsSold = oldTier.ticketsSold;
+          oldTiersMap.delete(tier.name);
+        } else {
+          if (oldEvent && oldEvent.stripeProductId) {
+            const stripePrice = await stripe.prices.create({
+              product: oldEvent.stripeProductId,
+              unit_amount: tier.price,
+              currency: 'eur',
+              nickname: tier.name,
+            });
+            priceId = stripePrice.id;
+            createdStripePriceIds.push(priceId);
+          }
+          if (oldTier) {
+            ticketsSold = oldTier.ticketsSold;
+            if (oldTier.stripePriceId && oldTier.stripePriceId.startsWith('price_')) {
+              pricesToArchive.push(oldTier.stripePriceId);
+            }
+            oldTiersMap.delete(tier.name);
+          }
         }
-        createdTiers.push({ ...tier, stripePriceId: priceId });
+        
+        createdTiers.push({ ...tier, stripePriceId: priceId, ticketsSold });
       }
     }
 
-    // 2. Synchronous Database Transaction
+    for (const t of Array.from(oldTiersMap.values())) {
+      if (t.stripePriceId && t.stripePriceId.startsWith('price_')) {
+        pricesToArchive.push(t.stripePriceId);
+      }
+    }
+
+    for (const pId of pricesToArchive) {
+      await stripe.prices.update(pId, { active: false }).catch(console.error);
+    }
+
     await db.transaction(async (tx) => {
       await tx.update(events).set({
         title, description, venue, city, address, 
@@ -175,6 +194,7 @@ export async function updateEvent(id: number, formData: any) {
           name: tier.name,
           price: tier.price,
           capacity: tier.capacity,
+          ticketsSold: tier.ticketsSold,
           stripePriceId: tier.stripePriceId, 
         }));
         await tx.insert(ticketTiers).values(tiersToInsert);
@@ -186,7 +206,6 @@ export async function updateEvent(id: number, formData: any) {
   } catch (error: any) {
     console.error("Error updating event:", error);
 
-    // STRIPE ROLLBACK: If DB fails, archive the newly created orphan prices
     for (const priceId of createdStripePriceIds) {
       await stripe.prices.update(priceId, { active: false }).catch(() => {});
     }

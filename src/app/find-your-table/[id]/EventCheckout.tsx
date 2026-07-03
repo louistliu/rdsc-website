@@ -58,7 +58,10 @@ export default function EventCheckout({
 
   const updateQuantity = (priceId: string, delta: number) => {
     setCart((prev) => {
-      const newQty = Math.max(0, (prev[priceId] || 0) + delta);
+      const option = ticketOptions.find((o) => o.stripePriceId === priceId);
+      const remaining = option ? Math.max(0, option.capacity - option.ticketsSold) : 0;
+      
+      const newQty = Math.max(0, Math.min(remaining, (prev[priceId] || 0) + delta));
       return { ...prev, [priceId]: newQty };
     });
   };
@@ -105,9 +108,10 @@ export default function EventCheckout({
       } else {
         throw new Error("No checkout URL returned from server.");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Checkout error:", err);
-      alert("Something went wrong during checkout. Please try again.");
+      alert(err.message || "Something went wrong during checkout. Please try again.");
+      window.location.reload();
     } finally {
       setLoading(false);
     }
@@ -161,6 +165,8 @@ export default function EventCheckout({
             <div className={styles.cartList}>
               {ticketOptions.map((option) => {
                 const qty = cart[option.stripePriceId] || 0;
+                const remaining = Math.max(0, option.capacity - option.ticketsSold);
+                const isSoldOut = remaining <= 0;
                 
                 return (
                   <div key={option.stripePriceId} className={styles.cartItemRow}>
@@ -169,7 +175,9 @@ export default function EventCheckout({
                       <span className={styles.cartItemPrice}>€{(option.price / 100).toFixed(2)}</span>
                     </div>
                     
-                    {qty === 0 ? (
+                    {isSoldOut ? (
+                      <div className={styles.soldOutBtn}>Sold Out</div>
+                    ) : qty === 0 ? (
                       <button className={styles.addBtn} onClick={() => handleAddToCart(option.stripePriceId)}>
                         Add
                       </button>
@@ -177,7 +185,14 @@ export default function EventCheckout({
                       <div className={styles.stepperControl}>
                         <button className={styles.stepperBtn} onClick={() => updateQuantity(option.stripePriceId, -1)}>-</button>
                         <span className={styles.stepperValue}>{qty}</span>
-                        <button className={styles.stepperBtn} onClick={() => updateQuantity(option.stripePriceId, 1)}>+</button>
+                        <button 
+                          className={styles.stepperBtn} 
+                          onClick={() => updateQuantity(option.stripePriceId, 1)}
+                          disabled={qty >= remaining}
+                          style={{ opacity: qty >= remaining ? 0.3 : 1, cursor: qty >= remaining ? 'not-allowed' : 'pointer' }}
+                        >
+                          +
+                        </button>
                       </div>
                     )}
                   </div>
