@@ -185,6 +185,22 @@
   color: #1A1410;
 }
 
+.soldOutBtn {
+  background: transparent;
+  border: 1px solid rgba(245, 236, 215, 0.2);
+  color: rgba(245, 236, 215, 0.4);
+  font-family: var(--font-poppins);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  cursor: not-allowed;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .stepperControl {
   display: flex;
   align-items: center;
