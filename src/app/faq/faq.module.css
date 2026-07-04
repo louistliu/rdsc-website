@@ -3,14 +3,14 @@
   padding: 10rem 0 8rem;
 }
 
-/* This is the magic that creates the true 50/50 split on the screen */
+
 .pageWrapper::before {
   content: "";
   position: absolute;
   top: 0;
   bottom: 0;
-  right: -1rem; /* Offsets the layout.tsx padding */
-  width: 50vw; /* Takes exactly half the screen */
+  right: -1rem; 
+  width: 50vw; 
   background-color: #1D1916;
   z-index: -1;
 }
@@ -19,17 +19,17 @@
   max-width: 1300px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 1fr; /* 50/50 columns perfectly align with the background split */
+  grid-template-columns: 1fr 1fr; 
   gap: 2rem;
   align-items: flex-start;
 }
 
-/* LEFT COLUMN */
+
 .leftColumn {
   display: flex;
   flex-direction: column;
   gap: 3rem;
-  padding-right: 4rem; /* Keeps it clear of the center split */
+  padding-right: 4rem; 
 }
 
 .title {
@@ -46,11 +46,11 @@
   height: auto;
 }
 
-/* RIGHT COLUMN */
+
 .rightColumn {
   display: flex;
   flex-direction: column;
-  padding: 0 4rem; /* Gives questions breathing room inside their colored half */
+  padding: 0 4rem; 
 }
 
 .accordion {
@@ -101,22 +101,27 @@
   font-weight: 400;
 }
 
-/* RESPONSIVE */
+
 @media (max-width: 900px) {
   .pageWrapper {
-    padding: 8rem 0 5rem;
+    padding: 8rem 0 0;
   }
   .pageWrapper::before {
-    display: none; /* Turn off the 50vw split on mobile */
+    display: none; 
   }
   .container {
     grid-template-columns: 1fr;
     gap: 3rem;
   }
+  .leftColumn {
+    align-items: center;
+    text-align: center;
+    padding-right: 0;
+  }
   .rightColumn {
-    padding: 2rem;
-    background-color: #1D1916; /* Just give the box a background on mobile */
-    border-radius: 12px;
+    padding: 2rem 2rem 4rem 2rem;
+    background-color: #1D1916; 
+    border-radius: 12px 12px 0 0;
   }
   .title {
     font-size: 2.75rem;

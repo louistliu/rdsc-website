@@ -5,7 +5,7 @@ import styles from './collaborate.module.css';
 export default function CollaboratePage() {
   const collaboratorsDir = path.join(process.cwd(), 'public', 'collaborators');
   let logos: string[] = [];
-  
+
   try {
     if (fs.existsSync(collaboratorsDir)) {
       logos = fs.readdirSync(collaboratorsDir).filter(file => 
@@ -16,10 +16,10 @@ export default function CollaboratePage() {
     console.error('Error reading collaborators directory:', error);
   }
 
-  // Use the actual logos if they exist, otherwise generate 6 placeholders
+
   const baseLogos = logos.length > 0 ? logos : Array.from({ length: 6 }, (_, i) => `placeholder-${i}`);
-  
-  // We need enough items to ensure it covers screens seamlessly, so we repeat the array until we have at least 10 items.
+
+
   const displayLogos: string[] = [];
   while (displayLogos.length < 10) {
     displayLogos.push(...baseLogos);
@@ -29,22 +29,22 @@ export default function CollaboratePage() {
     <main className={styles.collaboratePage}>
       <div className={styles.contentWrapper}>
         <h1 className={`font-display ${styles.mainTitle}`}>COLLABORATE WITH US</h1>
-        
+
         <div className={styles.infoBlock}>
-          <h2 className={`font-display ${styles.subTitle}`}>LET&apos;S MAKE<br />SOMETHING HAPPEN</h2>
+          <h2 className={`font-display ${styles.subTitle}`}>LET&apos;S MAKE{' '}<br className={styles.desktopBr} />SOMETHING HAPPEN</h2>
           <p className={styles.text}>
-            We partner with cultural institutions, venues,<br />
-            local businesses, and makers to bring<br />
-            communities together. Private events,<br />
-            programming consultancy, event coordination,<br />
+            We partner with cultural institutions, venues,{' '}<br className={styles.desktopBr} />
+            local businesses, and makers to bring{' '}<br className={styles.desktopBr} />
+            communities together. Private events,{' '}<br className={styles.desktopBr} />
+            programming consultancy, event coordination,{' '}<br className={styles.desktopBr} />
             community activation, and more.
           </p>
           <p className={styles.text}>
-            We also greatly appreciate any helping hand for<br />
-            organizing our events and teaching Mahjong to<br />
+            We also greatly appreciate any helping hand for{' '}<br className={styles.desktopBr} />
+            organizing our events and teaching Mahjong to{' '}<br className={styles.desktopBr} />
             new players.
           </p>
-          
+
           <div className={styles.socialBlock}>
             <a href="https://www.instagram.com/reddragonsocialclub" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
               <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -32,7 +32,7 @@ export default function RootLayout({
       <html lang="en" className={`${poppins.variable} ${tanTangkiwood.variable}`}>
         <body>
           <Navbar />
-          <main style={{ padding: "0 1rem", flex: 1, minHeight: "100vh" }}>
+          <main style={{ flex: 1, minHeight: "100vh" }}>
             {children}
           </main>
           <Footer />

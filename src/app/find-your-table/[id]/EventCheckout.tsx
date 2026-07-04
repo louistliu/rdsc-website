@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
 
@@ -41,15 +41,39 @@ export default function EventCheckout({
   const [loading, setLoading] = useState(false);
   const [cart, setCart] = useState<Record<string, number>>({});
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isTicketDrawerOpen, setIsTicketDrawerOpen] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const galleryImages = imageUrls ? imageUrls.slice(1) : [];
 
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const scrollPosition = scrollRef.current.scrollLeft;
+      const slideWidth = scrollRef.current.offsetWidth;
+      const activeIndex = Math.round(scrollPosition / slideWidth);
+      if (activeIndex !== currentImageIndex) {
+        setCurrentImageIndex(activeIndex);
+      }
+    }
+  };
+
+  const scrollToImage = (index: number) => {
+    if (scrollRef.current) {
+      const slideWidth = scrollRef.current.offsetWidth;
+      scrollRef.current.scrollTo({
+        left: index * slideWidth,
+        behavior: 'auto'
+      });
+      setCurrentImageIndex(index);
+    }
+  };
+
   const handleNextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % galleryImages.length);
+    scrollToImage((currentImageIndex + 1) % galleryImages.length);
   };
 
   const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
+    scrollToImage((currentImageIndex - 1 + galleryImages.length) % galleryImages.length);
   };
 
   const handleAddToCart = (priceId: string) => {
@@ -120,103 +144,64 @@ export default function EventCheckout({
   return (
     <main className={styles.container}>
       <div className={styles.gridContainer}>
-        {/* LEFT COLUMN: Image Gallery & Tickets */}
-        <div className={styles.leftColumn}>
-          {galleryImages.length > 0 ? (
-            <div className={styles.galleryContainer}>
-              {/* Thumbnails */}
-              <div className={styles.thumbnailList}>
-                {galleryImages.map((img, index) => (
-                  <div 
-                    key={index} 
-                    className={`${styles.thumbnailWrapper} ${currentImageIndex === index ? styles.activeThumbnail : ''}`}
-                    onClick={() => setCurrentImageIndex(index)}
-                  >
-                    <Image src={img} alt={`Thumbnail ${index + 1}`} fill style={{ objectFit: 'cover' }} />
+        {/* GALLERY AREA */}
+        {galleryImages.length > 0 ? (
+          <div className={styles.galleryArea}>
+            <div className={styles.thumbnailList}>
+              {galleryImages.map((img, index) => (
+                <div 
+                  key={index} 
+                  className={`${styles.thumbnailWrapper} ${currentImageIndex === index ? styles.activeThumbnail : ''}`}
+                  onClick={() => scrollToImage(index)}
+                >
+                  <Image src={img} alt={`Thumbnail ${index + 1}`} fill style={{ objectFit: 'cover' }} />
+                </div>
+              ))}
+            </div>
+            
+            <div className={styles.mainImageWrapper}>
+              <div 
+                className={styles.imageScrollTrack}
+                ref={scrollRef}
+                onScroll={handleScroll}
+              >
+                {galleryImages.map((img, idx) => (
+                  <div key={idx} className={styles.imageSlide}>
+                    <Image src={img} alt={title || "Event Image"} fill style={{ objectFit: 'cover' }} />
                   </div>
                 ))}
               </div>
               
-              {/* Main Image */}
-              <div className={styles.mainImageWrapper}>
-                <Image src={galleryImages[currentImageIndex]} alt={title || "Event Image"} fill style={{ objectFit: 'cover' }} />
-                
-                {galleryImages.length > 1 && (
-                  <>
-                    <button className={`${styles.navArrow} ${styles.navArrowLeft}`} onClick={handlePrevImage}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                    </button>
-                    <button className={`${styles.navArrow} ${styles.navArrowRight}`} onClick={handleNextImage}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className={styles.emptyGalleryPlaceholder}>
-              No additional images available
-            </div>
-          )}
+              {galleryImages.length > 1 && (
+                <>
+                  <button className={`${styles.navArrow} ${styles.navArrowLeft}`} onClick={handlePrevImage}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                  </button>
+                  <button className={`${styles.navArrow} ${styles.navArrowRight}`} onClick={handleNextImage}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </button>
 
-          <div className={styles.ticketBox}>
-            <h2 className={styles.ticketBoxTitle}>Tickets</h2>
-            
-            <div className={styles.cartList}>
-              {ticketOptions.map((option) => {
-                const qty = cart[option.stripePriceId] || 0;
-                const remaining = Math.max(0, option.capacity - option.ticketsSold);
-                const isSoldOut = remaining <= 0;
-                
-                return (
-                  <div key={option.stripePriceId} className={styles.cartItemRow}>
-                    <div className={styles.cartItemInfo}>
-                      <span className={styles.cartItemName}>{option.name}</span>
-                      <span className={styles.cartItemPrice}>€{(option.price / 100).toFixed(2)}</span>
-                    </div>
-                    
-                    {isSoldOut ? (
-                      <div className={styles.soldOutBtn}>Sold Out</div>
-                    ) : qty === 0 ? (
-                      <button className={styles.addBtn} onClick={() => handleAddToCart(option.stripePriceId)}>
-                        Add
-                      </button>
-                    ) : (
-                      <div className={styles.stepperControl}>
-                        <button className={styles.stepperBtn} onClick={() => updateQuantity(option.stripePriceId, -1)}>-</button>
-                        <span className={styles.stepperValue}>{qty}</span>
-                        <button 
-                          className={styles.stepperBtn} 
-                          onClick={() => updateQuantity(option.stripePriceId, 1)}
-                          disabled={qty >= remaining}
-                          style={{ opacity: qty >= remaining ? 0.3 : 1, cursor: qty >= remaining ? 'not-allowed' : 'pointer' }}
-                        >
-                          +
-                        </button>
-                      </div>
-                    )}
+                  <div className={styles.dotIndicators}>
+                    {galleryImages.map((_, idx) => (
+                      <div 
+                        key={idx} 
+                        className={`${styles.dot} ${idx === currentImageIndex ? styles.dotActive : ''}`}
+                        onClick={() => scrollToImage(idx)}
+                      />
+                    ))}
                   </div>
-                );
-              })}
+                </>
+              )}
             </div>
-
-            <div className={styles.totalRow}>
-              <span className={styles.ticketLabel}>Total:</span>
-              <span className={styles.totalPrice}>€{totalPrice}</span>
-            </div>
-
-            <button
-              className={styles.getSeatsBtn}
-              onClick={handleCheckout}
-              disabled={loading || totalItems === 0}
-            >
-              {loading ? "PROCESSING..." : "GET SEATS"}
-            </button>
           </div>
-        </div>
+        ) : (
+          <div className={`${styles.galleryArea} ${styles.emptyGalleryPlaceholder}`}>
+            No additional images available
+          </div>
+        )}
 
-        {/* RIGHT COLUMN: Details */}
-        <div className={styles.detailsColumn}>
+        {/* DETAILS AREA */}
+        <div className={styles.detailsArea}>
           <h1 className={`font-display ${styles.title}`}>{title}</h1>
 
           <div className={styles.metaInfo}>
@@ -280,6 +265,74 @@ export default function EventCheckout({
             )}
           </div>
         </div>
+
+        {/* TICKET AREA (DRAWER ON MOBILE) */}
+        <div className={`${styles.ticketArea} ${isTicketDrawerOpen ? styles.drawerOpen : ''}`}>
+          <div className={styles.ticketBox}>
+            <div className={styles.drawerHeader}>
+              <h2 className={styles.ticketBoxTitle}>Tickets</h2>
+              <button className={styles.closeDrawerBtn} onClick={() => setIsTicketDrawerOpen(false)}>×</button>
+            </div>
+            
+            <div className={styles.cartList}>
+              {ticketOptions.map((option) => {
+                const qty = cart[option.stripePriceId] || 0;
+                const remaining = Math.max(0, option.capacity - option.ticketsSold);
+                const isSoldOut = remaining <= 0;
+                
+                return (
+                  <div key={option.stripePriceId} className={styles.cartItemRow}>
+                    <div className={styles.cartItemInfo}>
+                      <span className={styles.cartItemName}>{option.name}</span>
+                      <span className={styles.cartItemPrice}>€{(option.price / 100).toFixed(2)}</span>
+                    </div>
+                    
+                    {isSoldOut ? (
+                      <div className={styles.soldOutBtn}>Sold Out</div>
+                    ) : qty === 0 ? (
+                      <button className={styles.addBtn} onClick={() => handleAddToCart(option.stripePriceId)}>
+                        Add
+                      </button>
+                    ) : (
+                      <div className={styles.stepperControl}>
+                        <button className={styles.stepperBtn} onClick={() => updateQuantity(option.stripePriceId, -1)}>-</button>
+                        <span className={styles.stepperValue}>{qty}</span>
+                        <button 
+                          className={styles.stepperBtn} 
+                          onClick={() => updateQuantity(option.stripePriceId, 1)}
+                          disabled={qty >= remaining}
+                          style={{ opacity: qty >= remaining ? 0.3 : 1, cursor: qty >= remaining ? 'not-allowed' : 'pointer' }}
+                        >
+                          +
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className={styles.totalRow}>
+              <span className={styles.ticketLabel}>Total:</span>
+              <span className={styles.totalPrice}>€{totalPrice}</span>
+            </div>
+
+            <button
+              className={styles.getSeatsBtn}
+              onClick={handleCheckout}
+              disabled={loading || totalItems === 0}
+            >
+              {loading ? "PROCESSING..." : "GET SEATS"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* MOBILE STICKY BOTTOM BAR */}
+      <div className={styles.mobileStickyBar}>
+        <button className={styles.stickyGetTicketsBtn} onClick={() => setIsTicketDrawerOpen(true)}>
+          GET TICKETS
+        </button>
       </div>
     </main>
   );

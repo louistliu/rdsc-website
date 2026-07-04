@@ -10,8 +10,8 @@ export const events = pgTable('events', {
   date: text('date').notNull(),
   time: text('time').notNull(),
   mapsUrl: text('maps_url').notNull(),
-  stripeProductId: text('stripe_product_id').notNull().default(''), // Added for Stripe sync
-  imageUrls: text('image_urls').array().notNull().default([]), // For UploadThing multiple pictures
+  stripeProductId: text('stripe_product_id').notNull().default(''), 
+  imageUrls: text('image_urls').array().notNull().default([]), 
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -21,7 +21,7 @@ export const ticketTiers = pgTable('ticket_tiers', {
     .notNull()
     .references(() => events.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
-  price: integer('price').notNull(), // In cents (e.g., 2000 = $20.00)
+  price: integer('price').notNull(), 
   capacity: integer('capacity').notNull(),
   ticketsSold: integer('tickets_sold').notNull().default(0),
   stripePriceId: text('stripe_price_id').notNull(),
