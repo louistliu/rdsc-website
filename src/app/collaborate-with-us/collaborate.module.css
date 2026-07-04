@@ -19,10 +19,10 @@
 }
 
 .mainTitle {
-  font-size: 6rem; /* Smaller to prevent wrapping */
-  white-space: nowrap; /* Forces it onto a single line */
+  font-size: 6rem; 
+  white-space: nowrap; 
   color: #FF863C;
-  margin-bottom: 1rem; /* Decreased to pull everything else up */
+  margin-bottom: 1rem; 
   letter-spacing: 0.05em;
   line-height: 0.85;
 }
@@ -82,7 +82,7 @@ a.socialLink:hover {
   letter-spacing: 0.05em;
 }
 
-/* MARQUEE STYLES */
+
 .marqueeContainer {
   width: 100vw;
   overflow: hidden;
@@ -101,7 +101,7 @@ a.socialLink:hover {
 .marqueeContent {
   display: flex;
   gap: 3rem;
-  padding-right: 3rem; /* Match the gap so there's seamless spacing between the two duplicate blocks */
+  padding-right: 3rem; 
 }
 
 .logoCircle {
@@ -113,12 +113,12 @@ a.socialLink:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Simulating the split vertical color from the Figma design */
+
   background: linear-gradient(to right, #E2CDCC 50%, #D8C3C2 50%);
-  border: 1px solid rgba(255, 255, 255, 0.05); /* very subtle edge */
+  border: 1px solid rgba(255, 255, 255, 0.05); 
 }
 
-/* Alternate colors for placeholders just like the figma design */
+
 .logoCircle:nth-child(even) {
   background: linear-gradient(to right, #D6C2C1 50%, #CBB7B6 50%);
 }
@@ -131,11 +131,11 @@ a.socialLink:hover {
 
 @keyframes scroll {
   to {
-    transform: translateX(-50%); /* Moves exactly half the track width (one of the two identical content blocks) */
+    transform: translateX(-50%); 
   }
 }
 
-/* RESPONSIVE */
+
 @media (max-width: 1024px) {
   .mainTitle {
     font-size: 5rem;
@@ -146,11 +146,30 @@ a.socialLink:hover {
 }
 
 @media (max-width: 768px) {
+  .contentWrapper {
+    padding: 0 2rem;
+  }
+  .text {
+    padding: 0 1rem;
+    font-size: 1.1rem;
+  }
   .mainTitle {
-    font-size: 4rem;
+    font-size: 3.5rem;
+    white-space: normal;
   }
   .subTitle {
     font-size: 1.8rem;
+  }
+  .socialBlock {
+    gap: 0;
+  }
+  .socialLink {
+    font-size: 0.9rem;
+    gap: 0.4rem;
+  }
+  .socialLink svg {
+    width: 16px;
+    height: 16px;
   }
   .friendsTitle {
     font-size: 2.2rem;
@@ -162,5 +181,8 @@ a.socialLink:hover {
   .marqueeContent {
     gap: 2rem;
     padding-right: 2rem;
+  }
+  .desktopBr {
+    display: none;
   }
 }

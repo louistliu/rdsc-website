@@ -3,41 +3,46 @@
   justify-content: center;
   align-items: center;
   min-height: 80vh;
-  padding: 7rem 2rem 4rem 2rem; /* Pushed the entire container down further */
+  padding: 7rem 2rem 4rem 2rem; 
 }
 
 .contentWrapper {
   text-align: center;
   width: 100%;
-  max-width: 700px;
+  max-width: 600px;
+  aspect-ratio: 2 / 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   background-color: rgba(255, 255, 255, 0.03);
-  padding: 2rem 2rem 3rem 2rem; /* Less padding on top, more on bottom */
+  padding: 2rem; 
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 .title {
-  font-size: 3.5rem;
-  margin-top: 0; /* Removing default h1 margin that was causing uneven top space */
-  margin-bottom: 0.8rem;
+  font-size: 2.5rem;
+  margin-top: 0; 
+  margin-bottom: 0.5rem;
 }
 
 .message {
-  font-size: 1.1rem;
-  line-height: 1.6;
+  font-size: 0.95rem;
+  line-height: 1.5;
   color: #CCCCCC;
   max-width: 480px;
-  margin: 0 auto 1.8rem auto;
+  margin: 0 auto 1.2rem auto;
 }
 
 .homeLink {
   display: inline-block;
-  padding: 1rem 3rem;
+  padding: 0.8rem 2.5rem;
   background-color: var(--foreground);
   color: var(--background);
   font-weight: 500;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   border-radius: 100px;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
@@ -45,4 +50,23 @@
 .homeLink:hover {
   opacity: 0.9;
   transform: scale(1.02);
+}
+
+@media (max-width: 768px) {
+  .contentWrapper {
+    padding: 1.5rem;
+  }
+  .title {
+    font-size: 1.6rem;
+    margin-bottom: 0.3rem;
+  }
+  .message {
+    font-size: 0.85rem;
+    line-height: 1.3;
+    margin-bottom: 0.8rem;
+  }
+  .homeLink {
+    padding: 0.6rem 1.8rem;
+    font-size: 0.85rem;
+  }
 }

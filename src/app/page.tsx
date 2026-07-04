@@ -26,26 +26,25 @@ export default function Home() {
         <div className={styles.aboutContainer}>
           <div className={styles.aboutLeft}>
             <h2 className={`font-display ${styles.aboutTitle}`}>
-              THE<br />
-              TABLE IS<br />
-              WHERE IT<br />
+              THE{' '}<br className={styles.desktopBr} />
+              TABLE IS{' '}<br className={styles.desktopBr} />
+              WHERE IT{' '}<br className={styles.desktopBr} />
               STARTS
             </h2>
             <Link href="/find-your-table" className={styles.aboutButton}>
               FIND YOUR TABLE
             </Link>
             <p className={styles.aboutText}>
-              Red Dragon Social Club is a<br />
-              mahjong community rooted in the<br />
-              Netherlands. We host regular<br />
-              mahjong meets and cultural events<br />
-              across the Netherlands.<br />
+              Red Dragon Social Club is a{' '}<br className={styles.desktopBr} />
+              mahjong community rooted in the{' '}<br className={styles.desktopBr} />
+              Netherlands. We host regular{' '}<br className={styles.desktopBr} />
+              mahjong meets and cultural events{' '}<br className={styles.desktopBr} />
+              across the Netherlands.{' '}<br className={styles.desktopBr} />
               New to the game? Even better.
             </p>
           </div>
           <div className={styles.aboutRight}>
             <div className={styles.aboutImageWrapper}>
-              {/* Note: This assumes the user will upload 'about-pic.jpg' */}
               <img src="/about-pic.jpg" alt="Playing Mahjong" className={styles.aboutImage} />
             </div>
           </div>
