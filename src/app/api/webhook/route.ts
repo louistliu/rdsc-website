@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import type Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { db } from "@/db";
 import { ticketTiers, events } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { Resend } from "resend";
 
-function generateEmailHtml(eventData: any, purchasedTickets: any[]) {
+function generateEmailHtml(eventData: Record<string, string>, purchasedTickets: { quantity: number; name: string }[]) {
   const ticketsListHtml = purchasedTickets
     .map((t) => `<li><strong>${t.quantity}x ${t.name}</strong></li>`)
     .join("");
@@ -47,19 +48,20 @@ export async function POST(req: NextRequest) {
   let event;
   try {
     event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET);
-  } catch (err: any) {
-    console.error(`Webhook signature verification failed: ${err.message}`);
-    return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : "Unknown error";
+    console.error(`Webhook signature verification failed: ${errorMsg}`);
+    return NextResponse.json({ error: `Webhook Error: ${errorMsg}` }, { status: 400 });
   }
 
   if (event.type === "checkout.session.completed") {
-    const session = event.data.object as any;
+    const session = event.data.object as Stripe.Checkout.Session;
 
     try {
       const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
       
-      const purchasedTickets: any[] = [];
-      let eventData: any = null;
+      const purchasedTickets: { quantity: number; name: string }[] = [];
+      let eventData: Record<string, string> | null = null;
 
       for (const item of lineItems.data) {
         if (item.price && item.price.id) {
@@ -99,7 +101,6 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // Dispatch Email via Resend
       const buyerEmail = session.customer_details?.email;
       if (eventData && purchasedTickets.length > 0 && buyerEmail && process.env.RESEND_API_KEY) {
         try {
@@ -118,7 +119,7 @@ export async function POST(req: NextRequest) {
         console.warn("RESEND_API_KEY is missing in .env.local. Database updated, but email was skipped.");
       }
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error processing checkout.session.completed event:", err);
       return NextResponse.json({ error: "Failed to process webhook" }, { status: 500 });
     }

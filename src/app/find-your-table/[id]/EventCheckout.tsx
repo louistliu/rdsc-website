@@ -132,9 +132,10 @@ export default function EventCheckout({
       } else {
         throw new Error("No checkout URL returned from server.");
       }
-    } catch (err: any) {
-      console.error("Checkout error:", err);
-      alert(err.message || "Something went wrong during checkout. Please try again.");
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : "An unexpected error occurred. Please try again.";
+      console.error("Checkout error:", error);
+      alert(errorMsg);
       window.location.reload();
     } finally {
       setLoading(false);

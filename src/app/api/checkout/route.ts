@@ -7,7 +7,7 @@ import { inArray } from "drizzle-orm";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { items } = body;
+    const { items } = body as { items: { priceId: string; quantity: number }[] };
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const priceIds = items.map((item: any) => item.priceId);
+    const priceIds = items.map((item) => item.priceId);
 
     const dbTiers = await db
       .select()
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     const origin = req.headers.get("origin") || "http://localhost:3000";
     const referer = req.headers.get("referer") || `${origin}/find-your-table`;
 
-    const line_items = items.map((item: any) => ({
+    const line_items = items.map((item) => ({
       price: item.priceId,
       quantity: item.quantity,
     }));
@@ -59,10 +59,11 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ id: session.id, url: session.url });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Error creating checkout session:", err);
+    const errorMessage = err instanceof Error ? err.message : "Internal Server Error";
     return NextResponse.json(
-      { error: err.message || "Internal Server Error" },
+      { error: errorMessage },
       { status: 500 }
     );
   }

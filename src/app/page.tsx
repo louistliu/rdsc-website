@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -45,7 +46,7 @@ export default function Home() {
           </div>
           <div className={styles.aboutRight}>
             <div className={styles.aboutImageWrapper}>
-              <img src="/about-pic.jpg" alt="Playing Mahjong" className={styles.aboutImage} />
+              <Image src="/about-pic.jpg" alt="Playing Mahjong" fill style={{ objectFit: "cover" }} className={styles.aboutImage} />
             </div>
           </div>
         </div>

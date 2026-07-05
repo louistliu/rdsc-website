@@ -8,8 +8,22 @@ import { UTApi } from "uploadthing/server";
 import Stripe from "stripe";
 import { currentUser } from "@clerk/nextjs/server";
 
+export type EventFormData = {
+  title: string;
+  description: string;
+  venue: string;
+  city: string;
+  address: string;
+  mapsUrl: string;
+  date: string;
+  time: string;
+  ticketTiers: { name: string; price: number; capacity: number; stripePriceId?: string; ticketsSold?: number }[];
+  imageUrls: string[];
+};
+
 const utapi = new UTApi();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   apiVersion: "2024-04-10" as any, 
 });
 
@@ -27,7 +41,7 @@ async function checkAdmin() {
   }
 }
 
-export async function createEvent(formData: any) {
+export async function createEvent(formData: EventFormData) {
   await checkAdmin();
 
   const { 
@@ -45,7 +59,7 @@ export async function createEvent(formData: any) {
     });
     stripeProductId = stripeProduct.id;
 
-    const createdTiers: any[] = [];
+    const createdTiers: { name: string; price: number; capacity: number; stripePriceId: string; ticketsSold?: number }[] = [];
     if (tiers && tiers.length > 0) {
       for (const tier of tiers) {
         const stripePrice = await stripe.prices.create({
@@ -88,7 +102,7 @@ export async function createEvent(formData: any) {
     revalidatePath("/admin");
     return { success: true };
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error saving event:", error);
     
     if (stripeProductId) {
@@ -98,11 +112,12 @@ export async function createEvent(formData: any) {
       await stripe.prices.update(priceId, { active: false }).catch(() => {});
     }
 
-    return { success: false, error: error.message };
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return { success: false, error: errorMessage };
   }
 }
 
-export async function updateEvent(id: number, formData: any) {
+export async function updateEvent(id: number, formData: EventFormData) {
   await checkAdmin();
 
   const { 
@@ -134,7 +149,7 @@ export async function updateEvent(id: number, formData: any) {
     const oldTiersMap = new Map(oldTiers.map(t => [t.name, t]));
     const pricesToArchive: string[] = [];
 
-    const createdTiers: any[] = [];
+    const createdTiers: { name: string; price: number; capacity: number; stripePriceId: string; ticketsSold: number }[] = [];
     if (tiers && tiers.length > 0) {
       for (const tier of tiers) {
         let priceId = "pending_stripe_setup";
@@ -203,14 +218,15 @@ export async function updateEvent(id: number, formData: any) {
 
     revalidatePath("/admin");
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error updating event:", error);
 
     for (const priceId of createdStripePriceIds) {
       await stripe.prices.update(priceId, { active: false }).catch(() => {});
     }
 
-    return { success: false, error: error.message };
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return { success: false, error: errorMessage };
   }
 }
 
@@ -231,8 +247,9 @@ export async function deleteEvent(id: number) {
     await db.delete(events).where(eq(events.id, id));
     revalidatePath("/admin");
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error deleting event:", error);
-    return { success: false, error: error.message };
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return { success: false, error: errorMessage };
   }
 }
