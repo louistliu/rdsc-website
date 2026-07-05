@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { UserButton } from "@clerk/nextjs";
 import { UploadDropzone } from "@/utils/uploadthing";
+import Image from "next/image";
 import "@uploadthing/react/styles.css";
 import { createEvent, updateEvent, deleteEvent } from "@/lib/admin-actions";
 
@@ -175,7 +176,7 @@ export default function AdminClient({ initialEvents }: { initialEvents: EventDat
               <div style={{ marginTop: "1.5rem", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))", gap: "1rem" }}>
                 {imageUrls.map((url, i) => (
                   <div key={i} style={{ position: "relative", width: "100%", aspectRatio: "1/1", borderRadius: "8px", overflow: "hidden", border: "1px solid rgba(255,134,60,0.3)" }}>
-                    <img src={url} alt="Event upload" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    <Image src={url} alt="Event upload" fill style={{ objectFit: "cover" }} />
                     <button type="button" onClick={() => setImageUrls(imageUrls.filter((_, idx) => idx !== i))} style={{ position: "absolute", top: "0.25rem", right: "0.25rem", background: "rgba(239,68,68,0.9)", color: "white", border: "none", borderRadius: "50%", width: "24px", height: "24px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: "bold" }}>X</button>
                   </div>
                 ))}
@@ -197,7 +198,7 @@ export default function AdminClient({ initialEvents }: { initialEvents: EventDat
         <h1 className="font-display" style={{ fontSize: "3rem", color: "#F5ECD7" }}>ADMIN DASHBOARD</h1>
         <div style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
           <button onClick={handleAddNew} style={{ background: "#FF863C", color: "#1A1410", border: "none", padding: "0.8rem 1.5rem", borderRadius: "6px", fontFamily: "var(--font-poppins)", fontWeight: "bold", cursor: "pointer" }}>+ Create New Event</button>
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
         </div>
       </div>
 
@@ -205,7 +206,7 @@ export default function AdminClient({ initialEvents }: { initialEvents: EventDat
         <h2 style={{ color: "#F5ECD7", fontFamily: "var(--font-poppins)", marginBottom: "1rem" }}>Existing Events</h2>
         
         {initialEvents.length === 0 ? (
-          <p style={{ color: "rgba(245, 236, 215, 0.4)", fontFamily: "var(--font-poppins)", fontStyle: "italic" }}>No events found. Click "Create New Event" to get started.</p>
+          <p style={{ color: "rgba(245, 236, 215, 0.4)", fontFamily: "var(--font-poppins)", fontStyle: "italic" }}>No events found. Click &quot;Create New Event&quot; to get started.</p>
         ) : (
           initialEvents.map(event => (
             <div key={event.id} style={{ background: "#1A1410", padding: "1.5rem 2rem", borderRadius: "8px", border: "1px solid rgba(255, 134, 60, 0.2)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
