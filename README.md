@@ -27,7 +27,6 @@ Clone:
 ```
 git clone <your-repo-url>
 cd <your-repo-name>
-npm install
 ```
 
 Install dependencies:
