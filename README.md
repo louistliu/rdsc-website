@@ -23,10 +23,15 @@ This is a ticket-selling platform built for the Red Dragon Social Club. It inclu
 ## Local Development Setup
 To run this project locally, you will need to set up accounts with the services listed in the Tech Stack and gather your API keys.
 
-Clone and install dependencies:
+Clone:
 ```
 git clone <your-repo-url>
-cd mahjong-nights
+cd <your-repo-name>
+npm install
+```
+
+Install dependencies:
+```
 npm install
 ```
 
