@@ -2,6 +2,7 @@
 This is a ticket-selling platform built for the Red Dragon Social Club. It includes a nicely designed website with products for the user to view and includes an admin dashboard for the owner to create products, upload media and manage inventory.
 
 Live Website: https://reddragonsocialclub.com/
+
 Project Handover: I engineered the core Next.js architecture, PostgreSQL database schema, and Stripe payment integrations. The codebase was subsequently handed over to the RDSC Mahjong Club for final frontend adjustments, deployment, and active hosting.
 
 ## Tech Stack
